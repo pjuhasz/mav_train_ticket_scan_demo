@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>MÁV Barcode Scanner Demo</title>
+	<style>
+		#result { margin-top: 1rem; display:none; }
+		#video	{ max-width: 100%; display:none; }
+	</style>
+</head>
+<body>
+	<h1>MÁV Barcode Scanner Demo</title></h1>
+	<button id="startBtn">Start scanning</button>
+	<button id="stopBtn"	style="display:none;">Stop</button>
+
+	<video id="video" autoplay playsinline></video>
+	<canvas id="canvas" style="display:none;"></canvas>
+
+	<button id="retryBtn" style="display:none;">Try again</button>
+	<div id="result"></div>
+
+	<script>
+		const SCAN_URL = {{.}};
+
+		const video     = document.getElementById('video');
+		const canvas    = document.getElementById('canvas');
+		const resultDiv = document.getElementById('result');
+		const startBtn  = document.getElementById('startBtn');
+		const stopBtn   = document.getElementById('stopBtn');
+		const retryBtn  = document.getElementById('retryBtn');
+		const width = 1280;
+		const height = 960; 
+
+		video.width = width;
+		video.height = height;
+		video.videoWidth = width;
+		video.videoHeight = height;
+
+		let scanInterval = null;
+		let scanning = false;
+		let uploading = false;
+
+		async function startCamera() {
+			const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+			video.srcObject = stream;
+			video.onloadedmetadata = () => {
+				video.play();
+				video.style.display = 'block';
+				startScanning();
+			};
+		}
+
+	 function startScanning() {
+			if (scanInterval) clearInterval(scanInterval);
+			scanning = true;
+			scanInterval = setInterval(captureAndUpload, 1000);
+		}
+
+		function stopScanning() {
+			scanning = false;
+			if (scanInterval) {
+				clearInterval(scanInterval);
+				scanInterval = null;
+			}
+			if (video.srcObject) {
+				video.srcObject.getTracks().forEach(t => t.stop());
+				video.srcObject = null;
+			}
+		}
+
+		async function captureAndUpload() {
+			if (!scanning || uploading || !video.videoWidth) return;
+			uploading = true;
+
+			canvas.width = width;
+			canvas.height = height;
+			const ctx = canvas.getContext('2d');
+			ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+			canvas.toBlob(async (blob) => {
+				try {
+					const formData = new FormData();
+					formData.append('image', blob, 'frame.jpg');
+
+					const res = await fetch(SCAN_URL, { method: 'POST', body: formData });
+					const data = await res.json();
+
+					// If user pressed Stop while this request was in flight, ignore result
+					if (!scanning) return;
+
+					if (data.success) {
+						stopScanning();
+						video.style.display = 'none';
+						stopBtn.style.display = 'none';
+
+						resultDiv.textContent = data.result || JSON.stringify(data);
+						resultDiv.style.display = 'block';
+						retryBtn.style.display = 'inline-block';
+					}
+				} catch (e) {
+					console.error('Upload error:', e);
+				} finally {
+					uploading = false;
+				}
+		 }, 'image/jpeg');
+		}
+
+		// UI event handlers
+		startBtn.addEventListener('click', () => {
+			resultDiv.style.display = 'none';
+			retryBtn.style.display = 'none';
+			startBtn.style.display = 'none';
+			stopBtn.style.display = 'inline-block';
+			startCamera().catch(err => {
+				console.error('Camera error:', err);
+				startBtn.style.display = 'inline-block';
+				stopBtn.style.display = 'none';
+			});
+		});
+
+		stopBtn.addEventListener('click', () => {
+			stopScanning();
+			video.style.display = 'none';
+			stopBtn.style.display = 'none';
+			startBtn.style.display = 'inline-block';
+			resultDiv.style.display = 'none';
+			retryBtn.style.display = 'none';
+		});
+
+		retryBtn.addEventListener('click', () => {
+			resultDiv.style.display = 'none';
+			retryBtn.style.display = 'none';
+			startBtn.style.display = 'none';
+			stopBtn.style.display = 'inline-block';
+			startCamera().catch(err => {
+				console.error('Camera error:', err);
+				startBtn.style.display = 'inline-block';
+				stopBtn.style.display = 'none';
+			});
+		});
+	</script>
+</body>
+</html>
+
+
