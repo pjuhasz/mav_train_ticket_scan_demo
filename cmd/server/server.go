@@ -13,6 +13,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	mav "github.com/pjuhasz/mav_train_ticket"
 )
 
 // default log instance
@@ -28,10 +30,26 @@ type Config struct {
 }
 
 type Result struct {
-	Success bool   `json:"success"`
-	Barcode string `json:"barcode"`
-	Result  string `json:"result"` // TODO actual result type
+	Success bool        `json:"success"`
+	Barcode string      `json:"barcode"`
+	Result  *mav.Ticket `json:"result"`
 }
+
+func hexStringToBytes(s string) ([]byte, error) {
+	fields := strings.Fields(s)
+	out := make([]byte, len(fields))
+
+	for i, f := range fields {
+		v, err := strconv.ParseUint(f, 16, 8)
+		if err != nil {
+			return nil, err
+		}
+		out[i] = byte(v)
+	}
+
+	return out, nil
+}
+
 
 func parseOutput(raw []byte) *Result {
 	res := &Result {}
@@ -43,9 +61,23 @@ func parseOutput(raw []byte) *Result {
 	}
 
 	parts := strings.SplitN(ress, ",", 3)
-	res.Success = true
 	res.Barcode = parts[1]
-	res.Result = parts[2]
+
+	bytes, err := hexStringToBytes(parts[2])
+	if err != nil {
+		log.Error("can't parse zxing output", "error", err)
+		return res
+	}
+
+	ticket, err := mav.ParseBytes(bytes)
+	if err != nil {
+		log.Error("can't parse ticket", "error", err)
+		return res
+	}
+
+	res.Success = true
+
+	res.Result = ticket
 
 	return res
 }

@@ -6,6 +6,7 @@
 	<style>
 		#result { margin-top: 1rem; display:none; }
 		#video	{ max-width: 100%; display:none; }
+
 	</style>
 </head>
 <body>
@@ -17,7 +18,30 @@
 	<canvas id="canvas" style="display:none;"></canvas>
 
 	<button id="retryBtn" style="display:none;">Try again</button>
-	<div id="result"></div>
+	<div id="result">
+		<div id="ticketData">
+			<h3>Ticket data</h3>
+			<table>
+				<th></th>
+				<td></td>
+			</table>
+		</div>
+
+		<div id="passengerBlock">
+			<h3>Passenger</h3>
+		</div>
+
+		<div id="tripBlock">
+			<h3>Trip data</h3>
+		</div>
+
+		<div id="seatReservations">
+			<h3>Seat reservations</h3>
+			
+		</div>
+
+
+	</div>
 
 	<script>
 		const SCAN_URL = {{.}};
@@ -50,7 +74,7 @@
 			};
 		}
 
-	 function startScanning() {
+		function startScanning() {
 			if (scanInterval) clearInterval(scanInterval);
 			scanning = true;
 			scanInterval = setInterval(captureAndUpload, 1000);
@@ -66,6 +90,10 @@
 				video.srcObject.getTracks().forEach(t => t.stop());
 				video.srcObject = null;
 			}
+		}
+
+		function renderResults() {
+			
 		}
 
 		async function captureAndUpload() {
@@ -93,7 +121,9 @@
 						video.style.display = 'none';
 						stopBtn.style.display = 'none';
 
-						resultDiv.textContent = data.result || JSON.stringify(data);
+						renderResults(data);
+
+						//resultDiv.textContent = JSON.stringify(data);
 						resultDiv.style.display = 'block';
 						retryBtn.style.display = 'inline-block';
 					}
