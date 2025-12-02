@@ -74,6 +74,8 @@ func parseOutput(raw []byte) *Result {
 		log.Error("can't parse ticket", "error", err)
 		return res
 	}
+	ticket.Translate(mav.LangHu)
+	log.Debug("got ticket", "json", ticket)
 
 	res.Success = true
 
