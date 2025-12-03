@@ -9,6 +9,7 @@
 
 		table, th, td {
 			border: 1px solid;
+			font-size: 18px;
 		}
 		th, td {
 			padding: 5px;
@@ -18,6 +19,20 @@
 		}
 		td.arrow {
 			text-align: center;
+		}
+		th {
+			background-color: #dddddd;
+		}
+		th.corner {
+			background-color: #333333;
+			color: white;
+			border: 1px solid;
+			border-color: #000000;
+			width: 150px;
+		}
+		div.resultBlock {
+			display: none;
+			padding: 10px;
 		}
 
 	</style>
@@ -31,11 +46,11 @@
 	<canvas id="canvas" style="display:none;"></canvas>
 
 	<button id="retryBtn" style="display:none;">Try again</button>
-	<div id="result" style="display:none;">
-		<div id="ticketData">
-			<h2>Ticket data</h3>
+	<div id="result" style="display:block;">
+		<div id="ticketData" class="resultBlock">
 			<table>
 				<tr>
+					<th class="corner">Ticket data</th>
 					<th>Barcode</th>
 					<th>Ticket medium</th>
 					<th>Version</th>
@@ -44,6 +59,7 @@
 					<th>Issued at</th>
 				</tr>
 				<tr>
+					<th></th>
 					<td id="barcode"></td>
 					<td id="ticket_medium"></td>
 					<td id="version"></td>
@@ -54,15 +70,16 @@
 			</table>
 		</div>
 
-		<div id="passengerBlock" style="display:none;">
-			<h2>Passenger</h3>
+		<div id="passengerBlock"  class="resultBlock">
 			<table>
 				<tr>
+					<th class="corner">Passenger</th>
 					<th>Name</th>
 					<th>Date of birth</th>
 					<th>ID card number</th>
 				</tr>
 				<tr>
+					<th></th>
 					<td id="name"></td>
 					<td id="date_of_birth"></td>
 					<td id="id_card_number"></td>
@@ -70,18 +87,17 @@
 			</table>
 		</div>
 
-		<div id="tripBlock" style="display:none;">
-			<h2>Trip data</h3>
+		<div id="tripBlock"  class="resultBlock">
 			<table>
 				<tr>
-					<th></th>
+					<th class="corner">Trip data</th>
 					<th>Ticket kind</th>
 					<th>Applied discounts</th>
 					<th>Passengers</th>
 					<th>Class</th>
 				</tr>
 				<tr>
-					<td></td>
+					<th></th>
 					<td id="trip_ticket_kind"></td>
 					<td id="trip_applied_discounts"></td>
 					<td id="trip_no_passengers"></td>
@@ -104,18 +120,17 @@
 			</table>
 		</div>
 
-		<div id="classUpgrade" style="display:none;">
-			<h2>Class upgrade</h3>
+		<div id="classUpgrade"  class="resultBlock">
 			<table>
 				<tr>
-					<th></th>
+					<th class="corner">Class upgrade</th>
 					<th>Ticket kind</th>
 					<th>Applied discounts</th>
 					<th>Passengers</th>
 					<th>Class</th>
 				</tr>
 				<tr>
-					<td></td>
+					<th></th>
 					<td id="clsu_ticket_kind"></td>
 					<td id="clsu_applied_discounts"></td>
 					<td id="clsu_no_passengers"></td>
@@ -129,33 +144,30 @@
 					<td></td>
 				</tr>
 				<tr>
+					<th>Valid</th>
 					<td id="clsu_valid_start"></td>
 					<td class="arrow"> &#8594;</td>
 					<td id="clsu_valid_end"></td>
-					<td></td>
 				</tr>
 			</table>
 		</div>
 
-		<div id="seatReservations" style="display:none;">
-			<h2>Seat reservations</h3>
+		<div id="seatReservations"  class="resultBlock">
 			<table id="seat1" style="display:none;">
 				<tr>
-					<th></th>
+					<th class="corner">Seat reservation</th>
 					<th>Ticket kind</th>
 					<th>Issuer code</th>
 					<th>Passengers</th>
-					<th>Class</th>
 					<th>Train</th>
 					<th>Coach</th>
 					<th>Seat</th>
 				</tr>
 				<tr>
-					<td></td>
+					<th></th>
 					<td id="seat1_ticket_kind"></td>
 					<td id="seat1_rics_code"></td>
 					<td id="seat1_no_passengers"></td>
-					<td id="seat1_class"></td>
 					<td id="seat1_train"></td>
 					<td id="seat1_coach"></td>
 					<td id="seat1_seat"></td>
@@ -165,27 +177,24 @@
 					<td id="seat1_departure"></td>
 					<td class="arrow"> &#8594;</td>
 					<td id="seat1_arrival"></td>
-					<td></td>
 					<td colspan="3" id="seat1_travel_time"></td>
 				</tr>
 			</table>
 			<table id="seat2" style="display:none;">
 				<tr>
-					<th></th>
+					<th class="corner">Seat reservation</th>
 					<th>Ticket kind</th>
 					<th>Issuer code</th>
 					<th>Passengers</th>
-					<th>Class</th>
 					<th>Train</th>
 					<th>Coach</th>
 					<th>Seat</th>
 				</tr>
 				<tr>
-					<td></td>
+					<th></th>
 					<td id="seat2_ticket_kind"></td>
 					<td id="seat2_rics_code"></td>
 					<td id="seat2_no_passengers"></td>
-					<td id="seat2_class"></td>
 					<td id="seat2_train"></td>
 					<td id="seat2_coach"></td>
 					<td id="seat2_seat"></td>
@@ -195,28 +204,29 @@
 					<td id="seat2_departure"></td>
 					<td class="arrow"> &#8594;</td>
 					<td id="seat2_arrival"></td>
-					<td></td>
 					<td colspan="3" id="seat2_travel_time"></td>
 				</tr>
 			</table>
 		</div>
 
-		<div id="passBlock" style="display:none;">
-			<h2>Pass</h3>
+		<div id="passBlock"  class="resultBlock">
 			<table>
 				<tr>
+					<th class="corner">Pass</th>
 					<th>Ticket kind</th>
 					<th>Applied discounts?</th>
 					<th>Applied discounts?</th>
 					<th>Passengers</th>
 				</tr>
 				<tr>
+					<th></th>
 					<td id="pass_ticket_kind"></td>
 					<td id="pass_applied discounts1"></td>
 					<td id="pass_applied discounts2"></td>
 					<td id="pass_no_passengers"></td>
 				</tr>
 				<tr>
+					<th>Valid</th>
 					<td id="pass_valid_start"></td>
 					<td class="arrow"> &#8594;</td>
 					<td id="pass_valid_end"></td>
@@ -295,6 +305,9 @@
 			const p = data.result.payload;
 			const h = p.header;
 
+			document.getElementById("ticketData").style.display = 'inline-block';
+
+
 			document.getElementById("barcode").textContent = data.barcode;
 			document.getElementById("ticket_medium").textContent = h.ticket_medium.name || h.ticket_medium.tag;
 			document.getElementById("version").textContent = data.result.envelope.version;
@@ -367,7 +380,6 @@
 				document.getElementById("seat1_ticket_kind").textContent = s1.ticket_kind.name || s1.ticket_kind.tag;
 				document.getElementById("seat1_rics_code").textContent = s1.rics_code;
 				document.getElementById("seat1_no_passengers").textContent = s1.num_passengers;
-				document.getElementById("seat1_class").textContent = s1.class;
 				document.getElementById("seat1_departure").textContent = s1.departure_station.name || s1.departure_station.id;
 				document.getElementById("seat1_arrival").textContent = s1.destination_station.name || s1.destination_station.id;
 
@@ -389,7 +401,6 @@
 				document.getElementById("seat2_ticket_kind").textContent = s2.ticket_kind.name || s2.ticket_kind.tag;
 				document.getElementById("seat2_rics_code").textContent = s2.rics_code;
 				document.getElementById("seat2_no_passengers").textContent = s2.num_passengers;
-				document.getElementById("seat2_class").textContent = s2.class;
 				document.getElementById("seat2_departure").textContent = s2.departure_station.name || s2.departure_station.id;
 				document.getElementById("seat2_arrival").textContent = s2.destination_station.name || s2.destination_station.id;
 
