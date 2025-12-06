@@ -13,12 +13,21 @@
 
 int main(int argc, char* argv[])
 {
-	if (argc != 2) {
-		std::cerr << "ERROR,Usage: " << argv[0] << " <image-file>" << std::endl;
+	if (argc < 2) {
+		std::cerr << "ERROR,Usage: [-b]" << argv[0] << " <image-file>" << std::endl;
 		return 1;
 	}
 
-	const char* filename = argv[1];
+	bool bytes_only = false;
+
+	const char* filename;
+	
+	if (argc >= 3 && strlen(argv[1]) > 1 && strncmp(argv[1], "-b", strlen(argv[1])) == 0) {
+		bytes_only = true;
+		filename = argv[2];
+	} else {
+		filename = argv[1];
+	}
 
 	// Load image using stb_image as 4‑channel RGBA (8 bits per channel)
 	int width = 0, height = 0, channels_in_file = 0;
@@ -65,7 +74,11 @@ int main(int argc, char* argv[])
 		   return 1;
 		}
 
-		std::cout << "OK," << ZXing::ToString(barcode.format()) << "," << ZXing::ToHex(barcode.bytes()) << std::endl;
+		if (bytes_only) {
+			std::cout.write(reinterpret_cast<const char*>(barcode.bytes().data()), barcode.bytes().size());
+		} else {
+			std::cout << "OK," << ZXing::ToString(barcode.format()) << "," << ZXing::ToHex(barcode.bytes()) << std::endl;
+		}
 
 	}
 
