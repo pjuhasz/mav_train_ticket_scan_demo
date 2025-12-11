@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
 			if (barcode.error()) {
 				std::cerr << "," << ZXing::ToString(barcode.error()) << std::endl;
 			}
-		   return 1;
+			continue;
 		}
 
 		if (bytes_only) {
