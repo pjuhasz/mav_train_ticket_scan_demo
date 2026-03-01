@@ -405,8 +405,8 @@
 				document.getElementById("seat2_arrival").textContent = s2.destination_station.name || s2.destination_station.id;
 
 				document.getElementById("seat2_train").textContent = s2.train_number;
-				document.getElementById("seat2_coach").textContent = s2.car_number;
-				document.getElementById("seat2_seat").textContent = s2.seat_number;
+				document.getElementById("seat2_coach").textContent = s2.car_numbers;
+				document.getElementById("seat2_seat").textContent = s2.seat_numbers;
 				document.getElementById("seat2_travel_time").textContent = formatUnixTimestamp(s2.travel_time.seconds_since_1970, 0);
 
 			} else {
